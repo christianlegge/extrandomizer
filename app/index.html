@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>window.$ = window.jQuery = require('../jquery-3.3.1.js');</script>
+    <script>var FileSaver = require('file-saver');</script>
+    <script src="../node_modules/localforage/dist/localforage.js"></script>
+    <script src="Color.js"></script>
+    <script src="rom.js"></script>
+  </head>
+  <body>
+    <h1>Extrandomizer</h1>
+    <input type="file" accept=".sfc" name="rom" />
+    <div class="file-upload-success show-on-success">
+      suces
+    </div>
+    <div class="file-upload-failure">
+      faild :(
+    </div>
+    <select class="show-on-success" id="heart-color">
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+      <option value="yellow">Yellow</option>
+    </select>
+    <input class="save-button show-on-success" type="button" value="Save"/>
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>
+<script>
+var bytes;
+var rom;
+$(function() {
+  $('input[name=rom]').on('change', function() {
+    $('.file-upload-success').hide();
+    $('.file-upload-failure').hide();
+    $('.save-button').hide();
+    var file = this.files[0];
+    console.log(file);
+    var fileReader = new FileReader();
+
+    fileReader.onload = function() {
+      bytes = new Int8Array(fileReader.result);
+
+      if (bytes[32704] == 86 && bytes[32705] == 84) {
+        $('.file-upload-failure').hide();
+        $('.show-on-success').show();
+      } else {
+        $('.file-upload-failure').show();
+        $('.show-on-success').hide();
+      }
+      rom = new Rom(bytes);
+    }
+
+    fileReader.readAsArrayBuffer(file);
+  });
+  $('.save-button').on('click', function() {
+    rom.setHeartColor($('#heart-color').find(':selected').val());
+    rom.setGrayscaleDungeons();
+    return FileSaver.saveAs(new Blob([rom.bytes]), 'savedRom.sfc');
+  });
+});
+</script>

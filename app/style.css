@@ -1,0 +1,17 @@
+.file-upload-success {
+  background-color: green;
+  display:none;
+}
+
+.file-upload-failure {
+  background-color: red;
+  display:none;
+}
+
+.save-button {
+  display:none;
+}
+
+.show-on-success {
+  display:none;
+}
